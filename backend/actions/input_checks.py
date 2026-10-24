@@ -7,7 +7,7 @@ import re
 from . import dataref
 from .base import Ctx, RuleConfig, make_result, register, violation_status
 from .pii import find_pii, presidio_extra, redact
-from .textutil import has_zero_width, is_definitional, negated_before, normalise, snippet
+from .textutil import NEG_RE, has_zero_width, is_definitional, negated_before, normalise, snippet
 
 DOC_ID_RE = re.compile(r"\b(?:RES|RST|MNPI|CASE|KYC)-\d{3}\b")
 
@@ -48,7 +48,7 @@ _INJ = [
     ("override-instructions", r"\b(ignore|disregard|forget|override|bypass|skip)\b.{0,25}\b(all|any|the|your|previous|prior|above|earlier|system|safety|these|those)\b.{0,25}\b(instructions?|rules?|prompts?|guidelines?|guardrails?|polic(?:y|ies)|restrictions?|directives?)\b"),
     ("reveal-prompt", r"\b(reveal|show|print|repeat|output|display|leak|tell me|share)\b.{0,30}\b(system|hidden|initial|original|developer)\b.{0,10}\b(prompt|instructions?|message)\b"),
     ("persona-jailbreak", r"\b(you are now|from now on you are|act as|pretend (?:to be|you are)|roleplay as)\b.{0,40}\b(dan|do anything now|unrestricted|unfiltered|jailbroken|no restrictions|without (?:any )?(?:restrictions|limits|rules|filters)|admin mode|developer mode)\b"),
-    ("mode-switch", r"\b(developer mode|admin mode|god mode|dan mode|jailbreak(?:ed)?|do anything now)\b"),
+    ("mode-switch", r"\b(?:(?:you are|you're|enable|activate|enter|switch to|turn on|in|into)\s+(?:now\s+)?(?:in\s+)?(?:developer|admin|god|dan|jailbreak(?:ed)?)\s+mode|do anything now)\b"),
     ("no-restrictions", r"\b(pretend|imagine|assume)\b.{0,30}\b(no|without)\b.{0,15}\b(restrictions?|rules?|guardrails?|filters?|limits?)\b"),
     ("fake-system-tag", r"(<\|im_start\|>|<\|system\|>|\[/?inst\]|<<sys>>|^\s*#{2,3}\s*system\b|^\s*system\s*:)"),
     ("new-instructions", r"\b(new|updated|real|actual)\s+instructions?\s*(?::|follow|are)\b"),
@@ -193,7 +193,7 @@ def in04(ctx: Ctx, rule: RuleConfig):
     asserted = re.search(_ASSERT, text)
     if nonpub and event and not negated_before(text, nonpub.start(), 25):
         ev.append(f"non-public marker + corporate event: ...{snippet(text, nonpub.start(), nonpub.end(), 20)}...")
-    elif asserted and not negated_before(text, asserted.start(), 15):
+    elif asserted and not negated_before(text, asserted.start(), 15) and not NEG_RE.search(asserted.group()):
         ev.append("user asserts they hold inside information")
     # tickers / names add context but are not required
     if not ev:

@@ -241,7 +241,7 @@ _VULN = [
     ("distress", r"\b(scared|terrified|desperate|hopeless|overwhelmed|can'?t cope|at my wit'?s end)\b"),
     ("self-harm risk", r"\b(suicid\w*|kill myself|end it all|self[- ]?harm|don'?t want to be here|no reason to live)\b"),
 ]
-_FIRST = re.compile(r"\b(i|i'm|i am|i've|i'd|my|me|we|we're|our|mum|dad)\b", re.I)
+_FIRST = re.compile(r"\b(i|i'm|i am|i've|i'd|my|me)\b", re.I)
 SUPPORT = ("I'm really sorry to hear that, and thank you for telling us. You don't need to deal with this alone. "
            "I'm passing your message to a member of our specialist support team, who will contact you personally and can talk through options such as payment breaks or adjusted arrangements. "
            "There's no pressure to make any decisions today.")
@@ -388,7 +388,7 @@ def out11(ctx: Ctx, rule: RuleConfig):
     ev = [f.masked for f in secrets]
     new = text
     block = any("PRIVATE KEY" in f.value for f in secrets)
-    for f in sorted(secrets, reverse=True):
+    for f in sorted(secrets, key=lambda x: x.start, reverse=True):
         new = new[:f.start] + "<REDACTED_SECRET: load from environment or a secret manager>" + new[f.end:]
     client_hits = []
     for c in dataref.clients():
