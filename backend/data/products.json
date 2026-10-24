@@ -1,0 +1,29 @@
+{
+  "_notice": "FICTIONAL DEMO DATA. Northbridge Financial is not a real firm. Not financial, legal or regulatory advice.",
+  "firm": "Northbridge Financial",
+  "facts": [
+    {"id": "P-SAVE-EA", "entity": "Northbridge Easy Access Saver", "aliases": ["Easy Access Saver"], "metric": "rate", "value": 3.10, "unit": "pct", "text": "AER 3.10% variable"},
+    {"id": "P-SAVE-EA-MIN", "entity": "Northbridge Easy Access Saver", "metric": "minimum_deposit", "value": 1, "unit": "gbp", "text": "minimum deposit GBP 1"},
+    {"id": "P-SAVE-F1", "entity": "Northbridge 1-Year Fixed Saver", "aliases": ["1-Year Fixed Saver", "Fixed Saver", "Fixed Saver 1 year", "Northbridge Fixed Saver"], "metric": "rate", "value": 4.60, "unit": "pct", "text": "AER 4.60% fixed for 1 year"},
+    {"id": "P-SAVE-F1-MIN", "entity": "Northbridge 1-Year Fixed Saver", "metric": "minimum_deposit", "value": 500, "unit": "gbp", "text": "minimum deposit GBP 500"},
+    {"id": "P-SAVE-F3", "entity": "Northbridge 3-Year Fixed Saver", "aliases": ["3-Year Fixed Saver"], "metric": "rate", "value": 4.15, "unit": "pct", "text": "AER 4.15% fixed for 3 years"},
+    {"id": "P-CA-OD", "entity": "Northbridge Everyday Current Account", "aliases": ["Everyday Current Account", "current account"], "metric": "overdraft_rate", "value": 35.0, "unit": "pct", "text": "arranged overdraft 35.0% EAR variable"},
+    {"id": "P-CA-FEE", "entity": "Northbridge Everyday Current Account", "metric": "monthly_fee", "value": 0, "unit": "gbp", "text": "no monthly fee"},
+    {"id": "P-ISA-PLAT", "entity": "Northbridge Investment ISA", "aliases": ["Investment ISA", "Stocks and Shares ISA", "ISA"], "metric": "platform_fee", "value": 0.45, "unit": "pct", "text": "platform fee 0.45% a year"},
+    {"id": "P-ISA-DEAL", "entity": "Northbridge Investment ISA", "metric": "dealing_fee", "value": 3.00, "unit": "gbp", "text": "dealing fee GBP 3.00 per trade"},
+    {"id": "P-ISA-ALLOW", "entity": "Northbridge Investment ISA", "metric": "annual_allowance", "value": 20000, "unit": "gbp", "text": "annual ISA allowance GBP 20,000 (tax year 2025/26)"},
+    {"id": "F-GEQ-1Y", "entity": "Northbridge Global Equity Fund", "aliases": ["Global Equity Fund"], "metric": "return_1y", "value": 8.4, "unit": "pct", "as_of": "2025-12-31", "text": "1-year return 8.4% to 31 December 2025. Past performance is not a guide to future returns."},
+    {"id": "F-GEQ-3Y", "entity": "Northbridge Global Equity Fund", "metric": "return_3y_annualised", "value": 6.1, "unit": "pct", "as_of": "2025-12-31", "text": "3-year annualised return 6.1% to 31 December 2025"},
+    {"id": "F-GEQ-OCF", "entity": "Northbridge Global Equity Fund", "metric": "ongoing_charge", "value": 0.22, "unit": "pct", "text": "ongoing charge figure 0.22%"},
+    {"id": "F-GEQ-AUM", "entity": "Northbridge Global Equity Fund", "metric": "fund_size", "value": 420000000, "unit": "gbp", "as_of": "2025-12-31", "text": "fund size GBP 420 million at 31 December 2025"},
+    {"id": "F-UKI-1Y", "entity": "Northbridge UK Income Fund", "aliases": ["UK Income Fund"], "metric": "return_1y", "value": 5.2, "unit": "pct", "as_of": "2025-12-31", "text": "1-year return 5.2% to 31 December 2025"},
+    {"id": "F-UKI-3Y", "entity": "Northbridge UK Income Fund", "metric": "return_3y_annualised", "value": 4.4, "unit": "pct", "as_of": "2025-12-31", "text": "3-year annualised return 4.4%"},
+    {"id": "F-UKI-YLD", "entity": "Northbridge UK Income Fund", "metric": "yield", "value": 3.8, "unit": "pct", "text": "distribution yield 3.8%"},
+    {"id": "F-UKI-OCF", "entity": "Northbridge UK Income Fund", "metric": "ongoing_charge", "value": 0.30, "unit": "pct", "text": "ongoing charge figure 0.30%"},
+    {"id": "F-CBF-1Y", "entity": "Northbridge Cautious Bond Fund", "aliases": ["Cautious Bond Fund"], "metric": "return_1y", "value": 2.9, "unit": "pct", "as_of": "2025-12-31", "text": "1-year return 2.9%"},
+    {"id": "F-CBF-3Y", "entity": "Northbridge Cautious Bond Fund", "metric": "return_3y_annualised", "value": 1.7, "unit": "pct", "as_of": "2025-12-31", "text": "3-year annualised return 1.7%"},
+    {"id": "F-CBF-OCF", "entity": "Northbridge Cautious Bond Fund", "metric": "ongoing_charge", "value": 0.18, "unit": "pct", "text": "ongoing charge figure 0.18%"},
+    {"id": "FIRM-AUM", "entity": "Northbridge Financial", "metric": "assets_under_management", "value": 12400000000, "unit": "gbp", "as_of": "2025-12-31", "text": "assets under management GBP 12.4 billion at 31 December 2025"}
+  ],
+  "extra_dates": ["2025-12-31", "2026-04-05", "2026-04-06"]
+}

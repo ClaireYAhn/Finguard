@@ -1,0 +1,16 @@
+{
+  "_notice": "FICTIONAL DEMO DATA. Companies and people are invented.",
+  "classification_levels": {"public": 0, "internal": 1, "restricted": 2, "mnpi": 3},
+  "documents": [
+    {"id": "RES-001", "title": "Northbridge Global Equity Fund: Q4 2025 commentary", "classification": "internal", "summary": "Quarterly commentary on the Global Equity Fund. 1-year return 8.4%, ongoing charge 0.22%."},
+    {"id": "RES-002", "title": "UK Income Fund: yield and dividend outlook", "classification": "internal", "summary": "Distribution yield 3.8%; dividend cover discussion."},
+    {"id": "RES-003", "title": "Savings market note: fixed vs easy access", "classification": "public", "summary": "Fixed Saver AER 4.60% versus Easy Access 3.10%."},
+    {"id": "RES-004", "title": "Cautious Bond Fund positioning", "classification": "internal", "summary": "1-year return 2.9%."},
+    {"id": "RST-001", "title": "Client suitability file: E. Whitcombe", "classification": "restricted", "summary": "Contains suitability assessment and holdings for a fictional client.", "allowed_roles": ["adviser", "compliance", "operations"]},
+    {"id": "RST-002", "title": "Full client contact list (fictional)", "classification": "restricted", "summary": "Names, emails and phone numbers of all fictional clients.", "allowed_roles": ["operations", "compliance"]},
+    {"id": "MNPI-001", "title": "Project Heron: unannounced acquisition of Aldermoor Plc", "classification": "mnpi", "summary": "Northbridge is advising on the unannounced takeover of Aldermoor Plc (fictional). Inside information.", "allowed_roles": ["compliance"]},
+    {"id": "CASE-001", "title": "AML case file: unusual transfers, client C-1004", "classification": "restricted", "summary": "Open AML review for a fictional client. SAR consideration pending.", "allowed_roles": ["compliance", "operations"]},
+    {"id": "CASE-002", "title": "Complaint file: fee dispute, client C-1002", "classification": "restricted", "summary": "Complaint about platform fees. Resolved after 6 weeks.", "allowed_roles": ["compliance", "operations", "adviser"]},
+    {"id": "KYC-001", "title": "KYC onboarding pack: sample passport scan text", "classification": "restricted", "summary": "Onboarding document for a fictional customer.", "allowed_roles": ["compliance", "operations"]}
+  ]
+}

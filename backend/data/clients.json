@@ -1,0 +1,10 @@
+{
+  "_notice": "FICTIONAL CLIENTS. Emails use example.com / example.org, phone numbers use Ofcom drama ranges. Not real people.",
+  "clients": [
+    {"id": "C-1001", "name": "Eleanor Whitcombe", "email": "eleanor.whitcombe@example.com", "phone": "07700 900101", "segment": "retail", "notes": "ISA holder"},
+    {"id": "C-1002", "name": "Marcus Thornfield", "email": "marcus.thornfield@example.org", "phone": "07700 900102", "segment": "retail", "notes": "Fee complaint 2025"},
+    {"id": "C-1003", "name": "Priya Nandakumar", "email": "priya.nandakumar@example.com", "phone": "07700 900103", "segment": "premier", "notes": "Fixed saver"},
+    {"id": "C-1004", "name": "Tobias Lindqvist", "email": "tobias.lindqvist@example.net", "phone": "07700 900104", "segment": "retail", "notes": "AML review open"},
+    {"id": "C-1005", "name": "Grace Okonkwo", "email": "grace.okonkwo@example.com", "phone": "07700 900105", "segment": "retail", "notes": "Recently bereaved, flagged vulnerable"}
+  ]
+}

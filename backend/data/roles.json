@@ -1,0 +1,13 @@
+{
+  "roles": {
+    "client": {"clearance": 0, "description": "External retail client"},
+    "staff": {"clearance": 1, "description": "General employee"},
+    "developer": {"clearance": 1, "description": "Software engineer"},
+    "analyst": {"clearance": 1, "description": "Research analyst"},
+    "agent": {"clearance": 1, "description": "Autonomous agent default"},
+    "adviser": {"clearance": 2, "description": "Regulated financial adviser"},
+    "operations": {"clearance": 2, "description": "Operations / KYC team"},
+    "compliance": {"clearance": 3, "description": "Compliance and financial crime team"},
+    "admin": {"clearance": 3, "description": "Platform admin"}
+  }
+}
