@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      { "hooks": [ { "type": "command", "command": "python3 \"${CLAUDE_PROJECT_DIR}/integrations/claude_code/finguard_user_prompt_hook.py\"" } ] }
+    ],
+    "PreToolUse": [
+      { "matcher": "*", "hooks": [ { "type": "command", "command": "python3 \"${CLAUDE_PROJECT_DIR}/integrations/claude_code/finguard_pretooluse_hook.py\"" } ] }
+    ]
+  }
+}

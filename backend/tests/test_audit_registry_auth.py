@@ -7,7 +7,6 @@ from app.db import get_db
 from audit import store as audit
 from registry import store as registry
 
-from .conftest import run_output
 from .test_gateway import post_a
 
 

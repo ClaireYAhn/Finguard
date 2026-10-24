@@ -4,8 +4,8 @@ import base64
 
 import pytest
 
-from actions.pii import find_pii, iban_ok, luhn_ok
 from actions.base import Segment
+from actions.pii import find_pii, iban_ok, luhn_ok
 
 from .conftest import run_input
 
