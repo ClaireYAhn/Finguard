@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from app import providers
 from app.auth import AuthError, authenticate_app
 from app.pipeline import Conversation, GovernResult, UpstreamError, govern
+from audit import store as audit_store
 from audit.store import CHANNELS
 
 from . import adapters
@@ -22,6 +23,11 @@ def resolve_identity(request: Request, app: dict[str, Any]) -> tuple[str, str, s
     channel = (request.headers.get("x-finguard-channel") or "gateway").lower()
     if channel not in CHANNELS - {"review", "eval", "demo"} | {"gateway"}:
         channel = "gateway"
+    if channel == "simulated":
+        try:
+            audit_store.ts_offset_minutes.set(float(request.headers.get("x-finguard-sim-offset-minutes", 0)))
+        except ValueError:
+            pass
     return user, role, channel
 
 

@@ -10,7 +10,8 @@ import hashlib
 import io
 import json
 import uuid
-from datetime import UTC, datetime
+from contextvars import ContextVar
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from actions.pii import find_pii, redact
@@ -23,8 +24,12 @@ HASHED_FIELDS = ["id", "ts", "app_id", "app_name", "user", "role", "channel", "o
 CHANNELS = {"gateway", "tool-call", "hook", "demo", "simulated", "review", "eval"}
 
 
+# Simulated traffic may be backdated (minutes) so demo charts have shape. Only honoured for channel=simulated and recorded in `extra`.
+ts_offset_minutes: ContextVar[float] = ContextVar("finguard_ts_offset", default=0.0)
+
+
 def now() -> str:
-    return datetime.now(UTC).isoformat(timespec="milliseconds")
+    return (datetime.now(UTC) - timedelta(minutes=ts_offset_minutes.get())).isoformat(timespec="milliseconds")
 
 
 def compute_hash(rec: dict[str, Any], prev: str) -> str:
@@ -53,7 +58,7 @@ def write_audit(*, app_id: str | None, app_name: str, user: str, role: str, chan
         "original_input": storage_redact(original_input), "redacted_input": storage_redact(redacted_input), "raw_output": storage_redact(raw_output),
         "final_output": storage_redact(final_output), "rule_results": json.dumps(rule_results, ensure_ascii=False, sort_keys=True),
         "final_action": final_action, "latency": json.dumps(latency, sort_keys=True), "pack": pack, "pack_version": pack_version, "model": model,
-        "engine": engine, "extra": json.dumps(extra or {}, ensure_ascii=False, sort_keys=True),
+        "engine": engine, "extra": json.dumps({**(extra or {}), **({"backdated_minutes": ts_offset_minutes.get()} if ts_offset_minutes.get() else {})}, ensure_ascii=False, sort_keys=True),
     }
     with db.lock:
         db.execute("BEGIN IMMEDIATE")

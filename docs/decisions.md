@@ -3,6 +3,9 @@
 ## D1. Location
 The working directory already contained an unrelated browser extension (background.js, manifest.json...), and was not a git repo. To avoid mixing, FinGuard lives in `finguard/` with its own git repository. The extension files are untouched.
 
+## D1b. Final location
+Mid-build, `~/Downloads/recreg-extension` (including the `finguard/` subfolder) was moved to the Trash and replaced by a fresh copy of the extension by a process outside this session (the folder reappeared at the same minute as `~/Downloads/recreg-extension.zip` was rewritten). Nothing in FinGuard's own commands touches that path. The complete project was recovered from `~/.Trash/recreg-extension/finguard` (git history intact) and now lives at `~/Projects/finguard`. The Trash original was left untouched.
+
 ## D2. NeMo Guardrails version and Colang
 Installed: `nemoguardrails==0.24.1` (latest on PyPI at build time), Python 3.11. Colang **1.0** (`colang_version: "1.0"`).
 Spike result (verified by running it, see `backend/tests/test_nemo_spike.py`): an `LLMRails` built from a config with **no `models:` section** can run
