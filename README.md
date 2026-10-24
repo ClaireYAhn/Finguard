@@ -62,7 +62,7 @@ python -m scripts.gen_regulation_mapping                  # docs/regulation-mapp
 `docs/demo-script.md` (three minutes).
 
 ## Troubleshooting
-- **Port 8000 busy** (the frontend dev proxy expects the API there): stop the other process or run `uvicorn … --port 8010` and edit `frontend/vite.config.ts`.
+- **Port 8000 busy / UI shows "Cannot reach the backend"**: run the API on another port and point the dev proxy at it: `uvicorn app.main:app --port 8010` then `FINGUARD_API=http://localhost:8010 npm run dev`.
 - **Login fails**: the password is `FINGUARD_ADMIN_PASSWORD` from the environment the server started with (default `change-me-admin`, logged as a warning).
 - **Sessions reset on restart**: set `FINGUARD_SESSION_SECRET`.
 - **Simulator says run seed first**: `python -m scripts.seed` writes `backend/.demo_keys.json`; re-seeding rotates demo keys.
