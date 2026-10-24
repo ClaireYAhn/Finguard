@@ -1,0 +1,17 @@
+# Each flow executes ONE custom action (registered from Python in app/engines.py) which runs the pack's enabled checks.
+# The action returns {"blocked": bool}; full per-rule results travel out-of-band keyed by $fg_run.
+
+define flow finguard input rails
+  $result = execute finguard_input_rails(run_id=$fg_run)
+  if $result.blocked
+    bot refuse finguard
+    stop
+
+define flow finguard output rails
+  $result = execute finguard_output_rails(run_id=$fg_run)
+  if $result.blocked
+    bot refuse finguard
+    stop
+
+define bot refuse finguard
+  "FINGUARD_STOP"

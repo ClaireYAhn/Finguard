@@ -176,13 +176,18 @@ _ASSERT = r"(this is|we have|i have|i've got|here is|here's|received|got hold of
 @register("IN-04", "MNPI screening", "pattern")
 def in04(ctx: Ctx, rule: RuleConfig):
     text = normalise(ctx.text)
-    if is_definitional(ctx.text) and not re.search(_EVENT, text):
-        return make_result(rule, "MNPI screening", "pattern", explanation="Definitional question about MNPI; no non-public information supplied.")
     ev: list[str] = []
     for did in DOC_ID_RE.findall(ctx.text.upper()):
         d = dataref.documents().get(did)
         if d and d["classification"] == "mnpi":
             ev.append(f"reference to MNPI document {did}")
+    for d in dataref.documents().values():
+        if d["classification"] == "mnpi":
+            codename = d["title"].split(":")[0].strip().lower()
+            if codename and codename in text and not any(codename in e for e in ev):
+                ev.append(f"reference to MNPI codename '{codename}'")
+    if not ev and is_definitional(ctx.text) and not re.search(_EVENT, text):
+        return make_result(rule, "MNPI screening", "pattern", explanation="Definitional question about MNPI; no non-public information supplied.")
     nonpub = re.search(_NONPUBLIC, text)
     event = re.search(_EVENT, text)
     asserted = re.search(_ASSERT, text)

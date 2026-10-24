@@ -44,6 +44,7 @@ class Segment:
     kind: str  # user | assistant | system | tool_result | document
     text: str
     index: int = 0
+    msg: int = 0  # index of the originating message (used to rebuild a text-only conversation)
 
 
 @dataclass

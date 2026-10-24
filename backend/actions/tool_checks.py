@@ -43,8 +43,14 @@ def _policy(ctx: Ctx) -> dict[str, Any]:
     return ctx.app.get("tool_policy") or {}
 
 
-def is_outbound(name: str, pol: dict[str, Any]) -> bool:
-    return name in pol.get("outbound_tools", []) or bool(OUTBOUND_RE.search(name))
+SHELL_RE = re.compile(r"(bash|shell|exec|command|terminal)", re.I)
+NET_CMD_RE = re.compile(r"\b(curl|wget|scp|sftp|ftp|nc|ncat|rsync|ssh|invoke-webrequest)\b", re.I)
+
+
+def is_outbound(name: str, pol: dict[str, Any], args: dict[str, Any] | None = None) -> bool:
+    if name in pol.get("outbound_tools", []) or OUTBOUND_RE.search(name):
+        return True
+    return bool(SHELL_RE.search(name) and args and NET_CMD_RE.search(" ".join(v for _, v in flatten(args))))
 
 
 def destinations(args: dict[str, Any]) -> list[str]:
@@ -66,12 +72,18 @@ def domain_allowed(host: str, allowed: list[str]) -> bool:
     return any(host == a.lower() or host.endswith("." + a.lower()) for a in allowed)
 
 
+def _leaf_pii(path: str, val: str, allow: set[str]):
+    """PII in one argument leaf. Email addresses in recipient/destination fields are governed by TL-05, not treated as PII here."""
+    key = re.split(r"[.\[]", path)[0].lower() if path else ""
+    skip = set(allow) | ({"EMAIL"} if key in DEST_KEYS else set())
+    return [f for f in find_pii(val) if f.kind not in skip]
+
+
 @register("TL-01", "PII or MNPI in tool arguments", "pattern")
 def tl01(ctx: Ctx, rule: RuleConfig):
     flat = _flat_text(ctx.tool_args)
-    pii = find_pii(flat)
     allow = set(rule.thresholds.get("allow_types", []))
-    pii = [f for f in pii if f.kind not in allow]
+    pii = [f for p, v in flatten(ctx.tool_args) for f in _leaf_pii(p, v, allow)]
     mn = in04(Ctx(text=flat, segments=[Segment("user", flat, 0)]), RuleConfig(id="IN-04", stage="input", severity="high", action="escalate"))
     ev = [f.masked for f in pii]
     if mn.status != "pass":
@@ -87,13 +99,13 @@ def tl01(ctx: Ctx, rule: RuleConfig):
                        new_text=json.dumps(modified) if rule.action == "modify" else None)
 
 
-def _redact_obj(o: Any, allow: set[str]) -> Any:
+def _redact_obj(o: Any, allow: set[str], path: str = "") -> Any:
     if isinstance(o, dict):
-        return {k: _redact_obj(v, allow) for k, v in o.items()}
+        return {k: _redact_obj(v, allow, f"{path}.{k}" if path else str(k)) for k, v in o.items()}
     if isinstance(o, list):
-        return [_redact_obj(v, allow) for v in o]
+        return [_redact_obj(v, allow, f"{path}[{i}]") for i, v in enumerate(o)]
     if isinstance(o, str):
-        return redact(o, [f for f in find_pii(o) if f.kind not in allow])
+        return redact(o, _leaf_pii(path, o, allow))
     return o
 
 
@@ -167,7 +179,7 @@ def tl04(ctx: Ctx, rule: RuleConfig):
 @register("TL-05", "Outbound destination allow-list", "deterministic")
 def tl05(ctx: Ctx, rule: RuleConfig):
     pol = _policy(ctx)
-    if not is_outbound(ctx.tool_name, pol):
+    if not is_outbound(ctx.tool_name, pol, ctx.tool_args):
         return make_result(rule, "Outbound destination allow-list", "deterministic", explanation="Not an outbound tool.")
     allowed = pol.get("allowed_outbound_domains", [])
     dests = destinations(ctx.tool_args)

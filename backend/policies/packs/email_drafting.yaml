@@ -1,0 +1,373 @@
+pack: email_drafting
+title: Email Drafting Assistant
+version: 1
+risk_tier: limited
+regulation_note: All mappings are illustrative, not legal advice.
+settings:
+  disclosures: []
+  blocked_topics:
+  - illicit
+  default_system_prompt: You draft emails for Northbridge staff to review. Internal reference code FG-CANARY-7731 must never
+    be shown to users.
+rules:
+- id: IN-01
+  name: Sensitive data redaction
+  description: Redact card numbers, IBANs, sort codes, account numbers, NI/SSN numbers, emails, phones, dates of birth and
+    secrets before text reaches the model.
+  stage: input
+  enabled: true
+  severity: high
+  action: modify
+  thresholds: {}
+  regulations:
+  - ref: UK GDPR Art. 5(1)(c)
+    why: 'Data minimisation: the external model should only receive personal data it needs.'
+  - ref: GDPR Art. 25
+    why: Data protection by design and by default is implemented by redacting before transmission.
+  - ref: DORA Art. 28
+    why: Sending data to a third-party ICT provider (the model vendor) is a third-party risk to control.
+- id: IN-02
+  name: Prompt injection and jailbreak
+  description: Detect direct and indirect prompt injection and jailbreak attempts, including obfuscated text and hidden instructions
+    in pasted documents and tool results.
+  stage: input
+  enabled: true
+  severity: high
+  action: block
+  thresholds: {}
+  regulations:
+  - ref: EU AI Act Art. 15
+    why: High-risk systems must be resilient against attempts to alter their use or behaviour (cybersecurity and robustness).
+  - ref: DORA Art. 9
+    why: ICT security tools and policies should prevent manipulation of critical systems.
+  - ref: SR 11-7
+    why: Model risk management expects controls on inputs that could cause a model to be used outside intended behaviour.
+- id: IN-03
+  name: Topic and intent control
+  description: Keep each use case within its intended topics and politely redirect off-scope or illicit requests.
+  stage: dialogue
+  enabled: true
+  severity: medium
+  action: block
+  thresholds: {}
+  regulations:
+  - ref: SR 11-7
+    why: Models should be used within their documented intended purpose.
+  - ref: EU AI Act Art. 13
+    why: Systems should be used in line with their stated intended purpose and instructions.
+- id: IN-04
+  name: MNPI screening
+  description: Screen for suspected material non-public information (MNPI); keep it away from the external model and refer
+    it to Compliance.
+  stage: input
+  enabled: true
+  severity: high
+  action: escalate
+  thresholds: {}
+  regulations:
+  - ref: UK MAR Art. 14
+    why: Prohibits unlawful disclosure of inside information; sending it to an external service may be a disclosure.
+  - ref: EU MAR Art. 10
+    why: Unlawful disclosure of inside information is prohibited except in the normal course of duties.
+  - ref: MiFID II Art. 16
+    why: Firms must maintain controls to manage information flows and conflicts.
+- id: IN-05
+  name: Role-based access control
+  description: Enforce role-based access to applications, documents and bulk data requests.
+  stage: retrieval
+  enabled: true
+  severity: high
+  action: block
+  thresholds: {}
+  regulations:
+  - ref: UK GDPR Art. 5(1)(f)
+    why: Personal data must be protected against unauthorised access (integrity and confidentiality).
+  - ref: DORA Art. 9
+    why: Access control and least privilege are part of ICT protection and prevention.
+  - ref: FCA SYSC 4
+    why: Firms need adequate systems and controls, including who can see what.
+- id: OUT-01
+  name: Promissory and misleading language
+  description: Rewrite promissory or misleading language such as guaranteed returns or risk-free claims.
+  stage: output
+  enabled: true
+  severity: high
+  action: modify
+  thresholds: {}
+  regulations:
+  - ref: FCA COBS 4.2
+    why: Communications must be fair, clear and not misleading.
+  - ref: FCA Consumer Duty (PRIN 2A)
+    why: Communications must support consumer understanding and avoid foreseeable harm.
+  - ref: SEC Marketing Rule (206(4)-1)
+    why: Prohibits untrue or unsubstantiated statements, including implied guarantees of results.
+- id: OUT-02
+  name: Advice boundary
+  description: Replace personalised investment recommendations with general information and a referral to a regulated adviser.
+  stage: output
+  enabled: true
+  severity: high
+  action: modify
+  thresholds: {}
+  regulations:
+  - ref: MiFID II Art. 25
+    why: Personal recommendations require a suitability assessment that a chatbot has not done.
+  - ref: FCA COBS 9
+    why: Suitability rules apply to advice and portfolio management.
+  - ref: FCA Consumer Duty (PRIN 2A)
+    why: Avoids foreseeable harm from unsuitable guidance.
+- id: OUT-03
+  name: Grounding of figures
+  description: Check percentages, money amounts and dates against approved data; correct or remove unsupported figures.
+  stage: output
+  enabled: true
+  severity: high
+  action: modify
+  thresholds: {}
+  regulations:
+  - ref: FCA COBS 4.2
+    why: Figures in communications must be accurate to avoid misleading clients.
+  - ref: SEC Marketing Rule (206(4)-1)
+    why: Performance and fee figures must be substantiated.
+  - ref: EU AI Act Art. 15
+    why: Accuracy of outputs is a requirement for high-risk systems.
+  - ref: SR 11-7
+    why: Ongoing monitoring and outcomes analysis of model outputs.
+- id: OUT-04
+  name: Source citation requirement
+  description: Research outputs with factual claims must cite approved source documents.
+  stage: output
+  enabled: false
+  severity: medium
+  action: modify
+  thresholds:
+    min_figures: 1
+  regulations:
+  - ref: FCA COBS 12
+    why: Investment research must be identifiable, sourced and clearly presented.
+  - ref: UK MAR Art. 20
+    why: Recommendations must disclose sources and be presented objectively.
+  - ref: SEC Marketing Rule (206(4)-1)
+    why: Claims need a reasonable basis that can be evidenced.
+- id: OUT-05
+  name: Required disclosures
+  description: Append required disclosures once (idempotent).
+  stage: output
+  enabled: false
+  severity: low
+  action: modify
+  thresholds: {}
+  regulations:
+  - ref: EU AI Act Art. 50
+    why: People must be told they are interacting with an AI system / AI-generated content.
+  - ref: FCA COBS 4.6
+    why: Past-performance communications need prescribed warnings.
+  - ref: SEC Marketing Rule (206(4)-1)
+    why: Performance presentations require disclosures.
+- id: OUT-06
+  name: Vulnerability and distress detection
+  description: Detect vulnerability and distress in the customer's messages, answer supportively and alert a human.
+  stage: output
+  enabled: true
+  severity: high
+  action: escalate
+  thresholds:
+    third_person: false
+  regulations:
+  - ref: FCA FG21/1
+    why: Guidance on the fair treatment of vulnerable customers requires recognising and supporting vulnerability.
+  - ref: FCA Consumer Duty (PRIN 2A)
+    why: The consumer support outcome requires help that meets vulnerable customers' needs.
+  - ref: EU AI Act Art. 14
+    why: 'Human oversight: a person must be able to step in.'
+- id: OUT-07
+  name: Confidentiality and PII leakage
+  description: Prevent leakage of personal data, secrets, restricted documents and the system prompt in model output.
+  stage: output
+  enabled: true
+  severity: high
+  action: modify
+  thresholds:
+    allow_types: []
+  regulations:
+  - ref: UK GDPR Art. 5(1)(f)
+    why: Output must not expose personal data to people who should not see it.
+  - ref: UK GDPR Art. 32
+    why: Appropriate technical measures protect confidentiality of processing.
+  - ref: DORA Art. 9
+    why: Prevent loss of confidentiality of data in ICT systems.
+- id: OUT-08
+  name: Fairness screen
+  description: Flag decision reasoning that relies on protected characteristics.
+  stage: output
+  enabled: false
+  severity: high
+  action: escalate
+  thresholds: {}
+  regulations:
+  - ref: Equality Act 2010 s.29
+    why: Providers of services must not discriminate on protected characteristics.
+  - ref: UK GDPR Art. 22
+    why: Restricts solely automated decisions with significant effects and use of special-category data.
+  - ref: EU AI Act Art. 10
+    why: Data governance and bias examination for high-risk systems such as credit scoring.
+  - ref: FCA Consumer Duty (PRIN 2A)
+    why: Customers with protected characteristics must achieve good outcomes.
+- id: OUT-09
+  name: AML tipping-off protection
+  description: Stop customer-facing drafts that reveal AML/SAR suspicion (tipping-off).
+  stage: output
+  enabled: true
+  severity: high
+  action: escalate
+  thresholds: {}
+  regulations:
+  - ref: POCA 2002 s.333A
+    why: Disclosing that a suspicious activity report has been made, in a way likely to prejudice an investigation, is an
+      offence.
+  - ref: MLR 2017
+    why: Firms must have AML policies and controls, including staff handling of suspicion.
+  - ref: EU AMLD (2015/849) Art. 39
+    why: Prohibition of disclosure to the customer concerned.
+- id: OUT-10
+  name: Explainability of decisions
+  description: Decision-support outputs must list the factors relied on.
+  stage: output
+  enabled: false
+  severity: high
+  action: escalate
+  thresholds:
+    min_factors: 2
+  regulations:
+  - ref: EU AI Act Annex III(5)(b)
+    why: Creditworthiness assessment of natural persons is a high-risk use.
+  - ref: EU AI Act Art. 13
+    why: High-risk systems must be transparent enough for users to interpret their output.
+  - ref: UK GDPR Art. 22
+    why: Individuals subject to automated decisions are entitled to meaningful information about the logic.
+  - ref: SR 11-7
+    why: Model outputs must be explainable to validators and users.
+- id: OUT-11
+  name: Code safety
+  description: Flag hard-coded secrets, credentials and client data in generated code or commit messages.
+  stage: output
+  enabled: false
+  severity: high
+  action: modify
+  thresholds: {}
+  regulations:
+  - ref: UK GDPR Art. 32
+    why: Secrets and personal data in code repositories are a security-of-processing risk.
+  - ref: DORA Art. 9
+    why: Credential and secrets hygiene is part of ICT protection.
+  - ref: DORA Art. 28
+    why: Code sent to third-party services must not leak credentials to them.
+- id: TL-01
+  name: PII or MNPI in tool arguments
+  description: Redact PII in tool-call arguments and hold calls that carry MNPI.
+  stage: tool
+  enabled: true
+  severity: high
+  action: modify
+  thresholds:
+    allow_types: []
+  regulations:
+  - ref: UK GDPR Art. 5(1)(c)
+    why: Tools should only receive the personal data they need.
+  - ref: UK MAR Art. 14
+    why: Passing inside information to a tool or recipient may be unlawful disclosure.
+- id: TL-02
+  name: Bulk export and exfiltration
+  description: Block bulk data export and exfiltration patterns.
+  stage: tool
+  enabled: true
+  severity: high
+  action: block
+  thresholds:
+    row_limit: 100
+    record_limit: 5
+  regulations:
+  - ref: UK GDPR Art. 32
+    why: Prevents a hijacked agent from mass-extracting personal data.
+  - ref: DORA Art. 9
+    why: Data-loss prevention is part of ICT protection.
+- id: TL-03
+  name: Role and tool access
+  description: Enforce the application's tool allow/deny lists and role-based tool and data access.
+  stage: tool
+  enabled: true
+  severity: high
+  action: block
+  thresholds: {}
+  regulations:
+  - ref: DORA Art. 9
+    why: Least-privilege access to ICT functions.
+  - ref: EU AI Act Art. 14
+    why: Limits what an AI system can do without oversight.
+- id: TL-04
+  name: Injection text in tool arguments
+  description: Block tool calls carrying injection text in arguments or recent context.
+  stage: tool
+  enabled: true
+  severity: high
+  action: block
+  thresholds: {}
+  regulations:
+  - ref: EU AI Act Art. 15
+    why: Resilience against manipulation of an agent's behaviour.
+  - ref: SR 11-7
+    why: Control over model use outside intended behaviour.
+- id: TL-05
+  name: Outbound destination allow-list
+  description: Outbound tools (email, HTTP, upload) may only target allow-listed destinations.
+  stage: tool
+  enabled: true
+  severity: high
+  action: block
+  thresholds: {}
+  regulations:
+  - ref: DORA Art. 28
+    why: Data leaving to unapproved third parties is a third-party ICT risk.
+  - ref: UK GDPR Art. 5(1)(f)
+    why: Prevents unauthorised disclosure of personal data.
+- id: TL-06
+  name: High-impact action approval
+  description: Payments and account changes require human approval before execution.
+  stage: tool
+  enabled: true
+  severity: high
+  action: escalate
+  thresholds: {}
+  regulations:
+  - ref: EU AI Act Art. 14
+    why: Human oversight of consequential actions.
+  - ref: SR 11-7
+    why: Controls and limits on model-driven actions.
+  - ref: FCA SYSC 4
+    why: Authorisation controls for money movement.
+- id: TR-01
+  name: Injection in tool results
+  description: Scan tool results for hidden instructions (indirect prompt injection) before they return to the model.
+  stage: tool
+  enabled: true
+  severity: high
+  action: block
+  thresholds: {}
+  regulations:
+  - ref: EU AI Act Art. 15
+    why: Resilience against indirect manipulation via data the system reads.
+  - ref: DORA Art. 9
+    why: Treat external content as untrusted input.
+- id: TR-02
+  name: Restricted data in tool results
+  description: Withhold tool results containing data the acting role may not see.
+  stage: tool
+  enabled: true
+  severity: high
+  action: block
+  thresholds: {}
+  regulations:
+  - ref: UK GDPR Art. 5(1)(f)
+    why: Confidentiality of personal data.
+  - ref: UK MAR Art. 10
+    why: Inside information must not reach people without a need to know.

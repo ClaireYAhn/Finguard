@@ -1,0 +1,10 @@
+# FinGuard NeMo Guardrails configuration (NeMo Guardrails 0.24.1, Colang 1.0).
+# No `models:` section on purpose: NeMo only executes the rails here; FinGuard's provider layer makes the model call.
+colang_version: "1.0"
+rails:
+  input:
+    flows:
+      - finguard input rails
+  output:
+    flows:
+      - finguard output rails
